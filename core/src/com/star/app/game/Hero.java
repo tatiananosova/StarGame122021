@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
@@ -19,6 +20,9 @@ public class Hero {
     private float fireTimer;
     private int score;
     private int scoreView;
+    private int hpMax;
+    private int hp;
+    private Circle hitArea;
 
 
     public int getScoreView() {
@@ -37,6 +41,18 @@ public class Hero {
         score += amount;
     }
 
+    public int getHpMax() {
+        return hpMax;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public Circle getHitArea() {
+        return hitArea;
+    }
+
     public Hero(GameController gc) {
         this.gc = gc;
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
@@ -44,6 +60,9 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 500.0f;
+        this.hitArea = new Circle(0, 0, 32);
+        this.hpMax = 100;
+        this.hp = hpMax;
     }
 
     public void render(SpriteBatch batch) {
@@ -114,6 +133,15 @@ public class Hero {
             position.y = ScreenManager.SCREEN_HEIGHT - 32f;
             velocity.y *= -0.5f;
         }
+        hitArea.setPosition(position);
+    }
 
+    public boolean takeDamage(int amount) {
+        hp -= amount;
+        if (hp <= 0) {
+            hp = hpMax;
+            return true;
+        }
+        return false;
     }
 }

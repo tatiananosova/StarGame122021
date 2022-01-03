@@ -61,6 +61,16 @@ public class GameController {
                 }
             }
         }
+        for (int j = 0; j < asteroidController.getActiveList().size(); j++) {
+            Asteroid a = asteroidController.getActiveList().get(j);
+            if (a.getHitArea().overlaps(hero.getHitArea())) {
+                a.deactivate();
+                if (hero.takeDamage(1)) {
+                    hero.addScore(a.getHpMax() * 100);
+                }
+                break;
+            }
+        }
 
         
     }

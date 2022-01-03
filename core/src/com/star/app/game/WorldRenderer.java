@@ -9,13 +9,15 @@ public class WorldRenderer {
     private GameController gc;
     private SpriteBatch batch;
     private BitmapFont font32;
-    private StringBuilder sb;
+    private StringBuilder scoreSB;
+    private StringBuilder hpSB;
 
     public WorldRenderer(GameController gc, SpriteBatch batch) {
         this.gc = gc;
         this.batch = batch;
         this.font32 = Assets.getInstance().getAssetManager().get("fonts/font32.ttf", BitmapFont.class);
-        this.sb = new StringBuilder();
+        this.scoreSB = new StringBuilder();
+        this.hpSB = new StringBuilder();
     }
 
     public void render() {
@@ -25,9 +27,12 @@ public class WorldRenderer {
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
         gc.getHero().render(batch);
-        sb.setLength(0);
-        sb.append("SCORE: ").append(gc.getHero().getScoreView());
-        font32.draw(batch, sb, 20, 700);
+        scoreSB.setLength(0);
+        scoreSB.append("SCORE: ").append(gc.getHero().getScoreView());
+        hpSB.setLength(0);
+        hpSB.append("HP: ").append(gc.getHero().getHp());
+        font32.draw(batch, scoreSB, 20, 700);
+        font32.draw(batch, hpSB, 20, 670);
         batch.end();
     }
 }
