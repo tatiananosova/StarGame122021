@@ -60,4 +60,8 @@ public class Weapon {
             }
         }
     }
+
+    public void addBullets(int amount) {
+        curBullets = curBullets + amount;
+    }
 }

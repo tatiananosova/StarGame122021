@@ -86,6 +86,10 @@ public class Asteroid implements Poolable {
 
     public void deactivate() {
         active = false;
+        if (MathUtils.random(100) < 20) {
+            PowerUps.Type type = PowerUps.Type.values()[MathUtils.random(0, 2)];
+            gc.getPowerUpsController().setup(position.x, position.y, type);
+        }
     }
 
     public void update(float dt) {

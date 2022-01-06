@@ -9,6 +9,7 @@ public class GameController {
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
+    private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tempVec;
 
@@ -32,12 +33,17 @@ public class GameController {
         return bulletController;
     }
 
+    public PowerUpsController getPowerUpsController() {
+        return powerUpsController;
+    }
+
     public GameController() {
         this.background = new Background(this);
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
+        this.powerUpsController = new PowerUpsController();
         this.tempVec = new Vector2();
 
         for (int i = 0; i < 3; i++) {
@@ -54,6 +60,7 @@ public class GameController {
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
+        powerUpsController.update(dt);
         checkCollisions();
     }
 
@@ -98,6 +105,25 @@ public class GameController {
                     }
                     break;
                 }
+            }
+        }
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUps p = powerUpsController.getActiveList().get(i);
+            if (p.getHitArea().overlaps(hero.getHitArea())) {
+                switch (p.getType()) {
+                    case MONEY:
+                        hero.addCoin();
+                        break;
+                    case BULLET:
+                        hero.addBullets();
+                        break;
+                    case HEALTH:
+                        hero.addHealth();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unknown powerups type");
+                }
+                p.deactivate();
             }
         }
 

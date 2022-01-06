@@ -24,6 +24,7 @@ public class Hero {
     private int scoreView;
     private int hpMax;
     private int hp;
+    private int coins;
     private StringBuilder sb;
     private Circle hitArea;
     private Weapon currentWeapon;
@@ -57,6 +58,7 @@ public class Hero {
         this.enginePower = 500.0f;
         this.hpMax = 100;
         this.hp = hpMax;
+        this.coins = 0;
         this.sb = new StringBuilder();
         this.hitArea = new Circle(position, 29);
         this.currentWeapon = new Weapon(gc, this, "Laser", 0.1f, 1, 600.0f, 300,
@@ -71,7 +73,8 @@ public class Hero {
         sb.setLength(0);
         sb.append("SCORE: ").append(scoreView).append("\n");
         sb.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
-        sb.append("BULLERS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        sb.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        sb.append("COINS: ").append(coins).append("\n");
         font.draw(batch, sb, 20, 700);
     }
 
@@ -83,6 +86,18 @@ public class Hero {
 
     public void takeDamage(int amount) {
         hp -= amount;
+    }
+
+    public void addCoin() {
+        coins++;
+    }
+
+    public void addHealth() {
+        hp += 10;
+    }
+
+    public void addBullets() {
+        currentWeapon.addBullets(100);
     }
 
     public void update(float dt) {
