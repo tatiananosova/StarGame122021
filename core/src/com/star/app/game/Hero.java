@@ -29,6 +29,8 @@ public class Hero {
     private Weapon currentWeapon;
     private int money;
 
+    SpriteBatch batch;
+
     public Weapon getCurrentWeapon() {
         return currentWeapon;
     }
@@ -51,6 +53,14 @@ public class Hero {
 
     public void addScore(int amount) {
         score += amount;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getScoreView() {
+        return scoreView;
     }
 
     public Hero(GameController gc) {
@@ -119,6 +129,12 @@ public class Hero {
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             angle -= 180.0f * dt;
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            GameState.PAUSED = true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.O)) {
+            GameState.PAUSED = false;
+        }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
             velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
@@ -158,6 +174,10 @@ public class Hero {
             }
 
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
+        }
+
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
 

@@ -17,11 +17,23 @@ import com.star.app.screen.utils.Assets;
 
 public class MenuScreen extends AbstractScreen {
     private BitmapFont font72;
-    private BitmapFont font24;
-    private Stage stage;
+    protected BitmapFont font24;
+    protected Stage stage;
 
     public MenuScreen(SpriteBatch batch) {
         super(batch);
+    }
+
+    protected String screenText() {
+        return "Star Game 2022";
+    }
+
+    protected String btn1Text() {
+        return "New Game";
+    }
+
+    protected String btn2Text() {
+        return "Exit Game";
     }
 
     @Override
@@ -40,8 +52,8 @@ public class MenuScreen extends AbstractScreen {
         textButtonStyle.font = font24;
         skin.add("simpleSkin", textButtonStyle);
 
-        Button btnNewGame = new TextButton("New Game", textButtonStyle);
-        Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
+        Button btnNewGame = new TextButton(btn1Text(), textButtonStyle);
+        Button btnExitGame = new TextButton(btn2Text(), textButtonStyle);
         btnNewGame.setPosition(480, 210);
         btnExitGame.setPosition(480, 110);
 
@@ -58,7 +70,7 @@ public class MenuScreen extends AbstractScreen {
                 Gdx.app.exit();
             }
         });
-
+        additionalData();
         stage.addActor(btnNewGame);
         stage.addActor(btnExitGame);
         skin.dispose();
@@ -70,12 +82,16 @@ public class MenuScreen extends AbstractScreen {
         stage.act(dt);
     }
 
+    protected void additionalData() {
+
+    }
+
     @Override
     public void render(float delta) {
         update(delta);
         ScreenUtils.clear(0.0f, 0.0f, 0.0f, 1);
         batch.begin();
-        font72.draw(batch, "Star Game 2022", 0, 600, 1280, Align.center, false);
+        font72.draw(batch, screenText(), 0, 600, 1280, Align.center, false);
         batch.end();
         stage.draw();
     }
