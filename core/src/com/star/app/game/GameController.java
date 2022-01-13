@@ -62,6 +62,14 @@ public class GameController {
         particleController.update(dt);
         powerUpsController.update(dt);
         checkCollisions();
+        checkGameOver();
+    }
+
+    private void checkGameOver() {
+        if (hero.getHp() <= 0) {
+            ScreenManager.getInstance().getGameOverScreen().setScore(hero.getScoreView());
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+        }
     }
 
     private void checkCollisions() {
