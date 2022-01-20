@@ -70,10 +70,19 @@ public class PowerUp implements Poolable {
     }
 
     public void update(float dt) {
-        position.mulAdd(velocity, dt);
+//        position.mulAdd(velocity, dt);
         time += dt;
-        if (time >= 7.0f) {
+        float magnetRadius = 700;
+        float magnetForce = 50;
+        if (time >= 25.0f) {
             deactivate();
         }
+        Vector2 heroPosition = gc.getHero().getPosition();
+        Vector2 magnetDist = new Vector2((heroPosition.x - position.x), (heroPosition.y - position.y));
+        float distance = (float) Math.sqrt((position.x) * (position.x) + (position.y) * (position.y));
+        float vecSum = Math.abs(magnetDist.x)+Math.abs(magnetDist.y);
+        Vector2 force = new Vector2((magnetForce*magnetDist.x * ((1/vecSum)*magnetRadius/distance)),
+                (magnetForce*magnetDist.y));
+        position.mulAdd(force, dt);
     }
 }
