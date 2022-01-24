@@ -7,8 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.star.app.screen.ScreenManager;
 
-public class
-Ship {
+public class Ship {
     protected GameController gc;
     protected TextureRegion texture;
     protected Vector2 position;

@@ -17,6 +17,7 @@ public class GameController {
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
     private InfoController infoController;
+    private BotController botController;
     private Hero hero;
     private Vector2 tempVec;
     private Stage stage;
@@ -58,6 +59,10 @@ public class GameController {
         return asteroidController;
     }
 
+    public BotController getBotController() {
+        return botController;
+    }
+
     public Hero getHero() {
         return hero;
     }
@@ -78,6 +83,7 @@ public class GameController {
         this.particleController = new ParticleController();
         this.powerUpsController = new PowerUpsController(this);
         this.infoController = new InfoController();
+        this.botController = new BotController(this);
         this.tempVec = new Vector2();
         this.level = 1;
         this.sb = new StringBuilder();
@@ -89,6 +95,7 @@ public class GameController {
         Gdx.input.setInputProcessor(stage);
 
         generateBigAsteroids(1);
+        generateBot();
     }
 
     public void generateBigAsteroids(int n) {
@@ -98,6 +105,13 @@ public class GameController {
                     MathUtils.random(-200, 200),
                     MathUtils.random(-200, 200), 1.0f);
         }
+    }
+
+    public void generateBot() {
+        botController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH),
+                MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
+                MathUtils.random(-200, 200),
+                MathUtils.random(-200, 200), 1.0f);
     }
 
     public void update(float dt) {
@@ -112,6 +126,7 @@ public class GameController {
         particleController.update(dt);
         powerUpsController.update(dt);
         infoController.update(dt);
+        botController.update(dt);
         checkCollisions();
         if (!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
@@ -120,6 +135,9 @@ public class GameController {
             level++;
             generateBigAsteroids(level <= 3 ? level : 3);
             timer = 0.0f;
+        }
+        if (botController.getActiveList().size() == 0) {
+            generateBot();
         }
         stage.act(dt);
     }
@@ -186,6 +204,19 @@ public class GameController {
                 hero.consume(p);
                 particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y, p.getType());
                 p.deactivate();
+            }
+        }
+
+        for (int i = 0; i < botController.getActiveList().size(); i++) {
+            Bot bot = botController.getActiveList().get(i);
+            if (hero.getHitArea().overlaps(bot.getHitArea())) {
+                int botDamage = 20;
+                hero.takeDamage(botDamage);
+                particleController.getEffectBuilder().buildMonsterSplash(bot.getPosition().x, bot.getPosition().y);
+                bot.deactivate();
+                sb.setLength(0);
+                sb.append("HP -").append(botDamage);
+                infoController.setup(hero.getPosition().x, hero.getPosition().y, sb.toString(), Color.BLUE);
             }
         }
 
