@@ -3,12 +3,12 @@ package com.star.app.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.star.app.screen.ScreenManager;
 
-public class
-Ship {
+public class Ship {
     protected GameController gc;
     protected TextureRegion texture;
     protected Vector2 position;
@@ -22,6 +22,11 @@ Ship {
     protected Weapon currentWeapon;
     protected Weapon[] weapons;
     protected int weaponNum;
+    protected OwnerType ownerType;
+
+    public OwnerType getOwnerType() {
+        return ownerType;
+    }
 
     public Weapon getCurrentWeapon() {
         return currentWeapon;
@@ -54,6 +59,16 @@ Ship {
         createWeapons();
         this.currentWeapon = weapons[weaponNum];
 
+    }
+
+    public void accelerate(float dt){
+        velocity.x += MathUtils.cosDeg(angle) * enginePower * dt;
+        velocity.y += MathUtils.sinDeg(angle) * enginePower * dt;
+    }
+
+    public void brake(float dt){
+        velocity.x += MathUtils.cosDeg(angle) * -enginePower / 2 * dt;
+        velocity.y += MathUtils.sinDeg(angle) * -enginePower / 2 * dt;
     }
 
     public void tryToFire() {
