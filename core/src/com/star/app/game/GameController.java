@@ -95,9 +95,7 @@ public class GameController {
         Gdx.input.setInputProcessor(stage);
 
         generateBigAsteroids(1);
-
-        botController.setup(100, 100);
-        botController.setup(1000, 100);
+        generateBots(1);
     }
 
     public void generateBigAsteroids(int n) {
@@ -106,6 +104,33 @@ public class GameController {
                     MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-200, 200),
                     MathUtils.random(-200, 200), 1.0f);
+        }
+    }
+
+    public void generateBots(int n) {
+        switch (n) {
+            case 1: {
+                botController.setup(100, 100);
+                break;
+            }
+            case 2: {
+                botController.setup(100, 100);
+                botController.setup(1000, 100);
+                break;
+            }
+            case 3: {
+                botController.setup(100, 100);
+                botController.setup(1000, 100);
+                botController.setup(100, 600);
+                break;
+            }
+            default: {
+                botController.setup(100, 100);
+                botController.setup(1000, 100);
+                botController.setup(100, 600);
+                botController.setup(1000, 600);
+                break;
+            }
         }
     }
 
@@ -129,6 +154,7 @@ public class GameController {
         if (asteroidController.getActiveList().size() == 0) {
             level++;
             generateBigAsteroids(level <= 3 ? level : 3);
+            generateBots(level);
             timer = 0.0f;
         }
         stage.act(dt);
@@ -138,23 +164,16 @@ public class GameController {
         for (int i = 0; i < asteroidController.getActiveList().size(); i++) {
             Asteroid a = asteroidController.getActiveList().get(i);
             if (a.getHitArea().overlaps(hero.getHitArea())) {
-                float dst = a.getPosition().dst(hero.getPosition());
-                float halfOverLen = (a.getHitArea().radius + hero.getHitArea().radius - dst) / 2;
-                tempVec.set(hero.getPosition()).sub(a.getPosition()).nor();
-                hero.getPosition().mulAdd(tempVec, halfOverLen);
-                a.getPosition().mulAdd(tempVec, -halfOverLen);
-
-                float sumScl = hero.getHitArea().radius + a.getHitArea().radius;
-                hero.getVelocity().mulAdd(tempVec, a.getHitArea().radius / sumScl * 100);
-                a.getVelocity().mulAdd(tempVec, -hero.getHitArea().radius / sumScl * 100);
-
+                collisionWithAsteroid(a, hero);
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 50);
                 }
-                hero.takeDamage(level * 2);
-                sb.setLength(0);
-                sb.append("HP -").append(level * 2);
-                infoController.setup(hero.getPosition().x, hero.getPosition().y, sb.toString(), Color.RED);
+            }
+            for (int j = 0; j < botController.getActiveList().size(); j++) {
+                Bot bot = botController.getActiveList().get(j);
+                if (a.getHitArea().overlaps(bot.getHitArea())) {
+                    collisionWithAsteroid(a, bot);
+                }
             }
         }
 
@@ -223,6 +242,9 @@ public class GameController {
                 if (hero.getHitArea().contains(b.getPosition())) {
                     hero.takeDamage(b.getOwner().getCurrentWeapon().getDamage());
                     b.deactivate();
+                    sb.setLength(0);
+                    sb.append("HP -").append(b.getOwner().getCurrentWeapon().getDamage());
+                    infoController.setup(hero.getPosition().x, hero.getPosition().y, sb.toString(), Color.YELLOW);
                 }
             }
 
@@ -232,11 +254,31 @@ public class GameController {
                     if (bot.getHitArea().contains(b.getPosition())) {
                         bot.takeDamage(b.getOwner().getCurrentWeapon().getDamage());
                         b.deactivate();
+                        sb.setLength(0);
+                        sb.append("HP -").append(b.getOwner().getCurrentWeapon().getDamage());
+                        infoController.setup(bot.getPosition().x, bot.getPosition().y, sb.toString(), Color.GREEN);
                     }
                 }
             }
         }
 
+    }
+
+    public void collisionWithAsteroid(Asteroid a, Ship ship) {
+        float dst = a.getPosition().dst(ship.getPosition());
+        float halfOverLen = (a.getHitArea().radius + ship.getHitArea().radius - dst) / 2;
+        tempVec.set(ship.getPosition()).sub(a.getPosition()).nor();
+        ship.getPosition().mulAdd(tempVec, halfOverLen);
+        a.getPosition().mulAdd(tempVec, -halfOverLen);
+
+        float sumScl = ship.getHitArea().radius + a.getHitArea().radius;
+        ship.getVelocity().mulAdd(tempVec, a.getHitArea().radius / sumScl * 100);
+        a.getVelocity().mulAdd(tempVec, -ship.getHitArea().radius / sumScl * 100);
+
+        ship.takeDamage(level * 2);
+        sb.setLength(0);
+        sb.append("HP -").append(level * 2);
+        infoController.setup(ship.getPosition().x, ship.getPosition().y, sb.toString(), Color.RED);
     }
 
     public void dispose() {
